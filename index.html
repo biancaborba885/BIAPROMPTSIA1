@@ -1,0 +1,580 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#090909">
+<title>Bia Prompts IA</title>
+<style>
+:root {
+--bg:#080808;
+--panel:#121212;
+--red:#f12b3d;
+--text:#f6f3f3;
+--muted:#9b9698;
+--line:#292326;
+}
+*{box-sizing:border-box}
+body{
+margin:0;
+background:radial-gradient(ellipse at 50% -15%,#3b0911 0,transparent 40%),var(--bg);
+color:var(--text);
+font-family:Arial,sans-serif;
+min-height:100vh;
+}
+button,input,textarea,select{font:inherit}
+button{cursor:pointer}
+.app{max-width:1180px;margin:auto;padding:22px 22px 100px}
+header{
+display:flex;align-items:center;
+justify-content:space-between;
+gap:14px;margin-bottom:25px
+}
+.brand{display:flex;align-items:center;gap:12px}
+.logo{
+width:44px;height:44px;border-radius:14px;
+background:linear-gradient(145deg,#ff4858,#9c071a);
+display:grid;place-items:center;
+font-size:22px;font-weight:900;
+}
+.brand h1{font-size:19px;margin:0}
+.brand small{display:block;color:var(--muted);font-size:10px;letter-spacing:2px;margin-top:3px}
+.icon-btn,.admin-btn{
+border:1px solid var(--line);
+background:#151315;color:white;
+border-radius:12px;padding:10px 13px
+}
+.admin-btn{background:var(--red);border-color:var(--red);font-weight:bold}
+.hero{padding:24px 0 20px}
+.eyebrow{color:#ff6571;font-size:11px;font-weight:800;letter-spacing:2px}
+.hero h2{font-size:clamp(27px,5vw,43px);margin:9px 0}
+.hero h2 span{color:var(--red)}
+.hero p{color:var(--muted);font-size:14px}
+.search{margin:20px 0 15px}
+.search input{
+width:100%;padding:16px;
+border-radius:14px;background:#141214;
+border:1px solid #30262a;color:white;outline:none
+}
+.filters{display:flex;gap:8px;overflow:auto;padding:10px 0 15px}
+.chip{
+white-space:nowrap;border:1px solid #30282b;
+background:#141214;color:#c9c2c4;
+border-radius:30px;padding:9px 15px;font-size:12px
+}
+.chip.active{background:var(--red);color:white}
+.notice{
+border:1px solid #3b2429;
+background:linear-gradient(110deg,#211116,#151214);
+padding:13px 15px;border-radius:13px;
+font-size:12px;margin:4px 0 20px
+}
+.section-head{display:flex;justify-content:space-between;margin:10px 0 14px}
+.count{font-size:11px;color:var(--muted)}
+.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.card{
+border:1px solid var(--line);
+background:linear-gradient(180deg,#181516,#101010);
+border-radius:17px;overflow:hidden;
+transition:.25s;animation:rise .45s both
+}
+.card:hover{transform:translateY(-4px);border-color:#79303a}
+.thumb{height:215px;position:relative;background:#242022;overflow:hidden}
+.thumb img,.thumb video{width:100%;height:100%;object-fit:cover}
+.tag{
+position:absolute;top:10px;left:10px;
+background:#141014d9;border-radius:30px;
+padding:5px 9px;font-size:10px
+}
+.favorite{
+position:absolute;right:10px;bottom:10px;
+width:33px;height:33px;border-radius:50%;
+background:#111b;color:white;border:1px solid #ffffff44
+}
+.favorite.on{color:#ff5364}
+.card-body{padding:12px}
+.meta{font-size:10px;color:#ff7783;text-transform:uppercase}
+.card h4{font-size:14px;margin:8px 0 12px;min-height:34px}
+.actions{display:grid;gap:7px}
+.copy,.ask{
+border:0;border-radius:9px;
+padding:10px 8px;font-size:11px;font-weight:bold
+}
+.copy{background:linear-gradient(100deg,#f12b3d,#b50e22);color:white}
+.ask{background:#21191c;border:1px solid #40262d;color:#f2c8cd}
+.empty{grid-column:1/-1;text-align:center;padding:45px 10px;color:var(--muted)}
+.bottom{
+position:fixed;bottom:0;left:0;right:0;
+background:#0d0b0cf0;border-top:1px solid #302529
+}
+.nav{display:flex;justify-content:space-around;padding:12px 5px}
+.nav button{background:none;border:0;color:#aaa;font-size:10px;display:grid;gap:4px}
+.nav button span{font-size:19px}
+.nav button.active{color:#ff5364}
+.modal{
+display:none;position:fixed;inset:0;
+background:#000b;z-index:10;
+align-items:center;justify-content:center;padding:16px
+}
+.modal.show{display:flex}
+.dialog{
+width:min(560px,100%);max-height:90vh;overflow:auto;
+background:#151214;border:1px solid #503038;
+border-radius:18px;padding:20px
+}
+.dialog-top{display:flex;justify-content:space-between;margin-bottom:14px;gap:10px}
+.close{background:#282124;color:white;border:0;padding:8px;border-radius:9px}
+.field{display:grid;gap:6px;margin:12px 0}
+.field label{font-size:11px;color:#c7babe;font-weight:bold}
+.field input,.field textarea,.field select{
+background:#0d0c0c;border:1px solid #382d31;
+border-radius:10px;padding:11px;color:white;width:100%
+}
+.field textarea{min-height:150px;resize:vertical}
+.form-actions{display:flex;gap:8px;margin-top:15px}
+.form-actions button{flex:1;padding:12px;border:0;border-radius:10px;font-weight:bold}
+.save{background:var(--red);color:white}
+.cancel{background:#2a2426;color:white}
+
+/* VISUALIZAÇÃO DA MÍDIA EM 9:16 */
+.detail-image{
+width:100%;
+aspect-ratio:9/16;
+max-height:70vh;
+object-fit:contain;
+display:block;
+margin:0 auto;
+border-radius:12px;
+background:#080808;
+}
+
+.detail-prompt{
+white-space:pre-wrap;background:#0c0b0b;
+border:1px solid #32292c;border-radius:12px;
+padding:13px;font-size:12px;line-height:1.6;margin:12px 0
+}
+.media-preview{
+width:100%;max-height:220px;
+object-fit:cover;border-radius:12px;
+margin-top:10px;background:#090909;
+}
+.toast{
+position:fixed;left:50%;bottom:88px;
+transform:translate(-50%,15px);
+background:white;color:#111;padding:11px 17px;
+border-radius:30px;font-size:12px;font-weight:bold;
+opacity:0;transition:.25s;z-index:20
+}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+@keyframes rise{
+from{opacity:0;transform:translateY(12px)}
+to{opacity:1;transform:translateY(0)}
+}
+@media(max-width:850px){
+.grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media(max-width:600px){
+.app{padding:15px 13px 100px}
+.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.thumb{height:190px}
+.card-body{padding:10px}
+.brand h1{font-size:17px}
+.admin-btn{padding:9px 10px;font-size:11px}
+.dialog{padding:15px}
+}
+@media(max-width:370px){
+.thumb{height:160px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+<header>
+<div class="brand">
+<div class="logo">✦</div>
+<div>
+<h1>BIA PROMPTS IA</h1>
+<small>SUA CRIATIVIDADE SEM LIMITES</small>
+</div>
+</div>
+<div>
+<button class="icon-btn" onclick="setFilter('Favoritos')">♡</button>
+<button class="admin-btn" onclick="openAdmin()">＋ Novo prompt</button>
+</div>
+</header>
+
+<section class="hero">
+<div class="eyebrow">✦ BIBLIOTECA CRIATIVA</div>
+<h2>Galeria de <span>Prompts</span></h2>
+<p>Escolha, copie e crie imagens incríveis com inteligência artificial.</p>
+</section>
+
+<div class="search">
+<input id="search" placeholder="Buscar prompts..." oninput="render()">
+</div>
+
+<div class="filters" id="filters"></div>
+
+<div class="notice">
+✨ <b>Dica:</b> escolha um prompt, copie com um toque e use na sua IA favorita.
+</div>
+
+<div class="section-head">
+<h3 id="sectionTitle">Explorar prompts</h3>
+<span class="count" id="count"></span>
+</div>
+
+<main class="grid" id="grid"></main>
+</div>
+
+<div class="bottom">
+<nav class="nav">
+<button class="active" onclick="setFilter('Todos',this)"><span>⌂</span>Início</button>
+<button onclick="setFilter('POV',this)"><span>◉</span>POV</button>
+<button onclick="setFilter('UGC',this)"><span>▣</span>UGC</button>
+<button onclick="setFilter('Celular',this)"><span>▤</span>Celular</button>
+<button onclick="setFilter('Movimentos',this)"><span>✧</span>Movimentos</button>
+<button onclick="setFilter('Favoritos',this)"><span>♡</span>Salvos</button>
+</nav>
+</div>
+
+<div class="modal" id="modal" onclick="if(event.target===this)closeModal()">
+<div class="dialog" id="dialog"></div>
+</div>
+<div class="toast" id="toast">Prompt copiado!</div>
+
+<script>
+const seed=[
+{
+id:1,
+title:"Selfie no espelho — look elegante",
+cat:"POV",
+type:"Feminino",
+img:"https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=700&auto=format&fit=crop",
+prompt:"Crie uma fotografia ultrarrealista em estilo selfie no espelho, preservando fielmente a aparência da pessoa da imagem de referência. A modelo usa um look elegante, pose natural e expressão confiante. Ambiente moderno, iluminação suave, textura realista da pele, fotografia vertical 9:16, alta definição."
+},
+{
+id:2,
+title:"Retrato lifestyle sofisticado",
+cat:"UGC",
+type:"Feminino",
+img:"https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=700&auto=format&fit=crop",
+prompt:"Fotografia lifestyle ultrarrealista de uma mulher em ambiente sofisticado, pose espontânea, luz natural lateral, composição editorial, detalhes naturais e acabamento de câmera profissional. Manter identidade e características da referência. Formato vertical 9:16."
+},
+{
+id:3,
+title:"Look casual — foto no espelho",
+cat:"Celular",
+type:"Moda",
+img:"https://images.unsplash.com/photo-1483985988355-763728e1935b?w=700&auto=format&fit=crop",
+prompt:"Recrie uma foto casual de moda feita com celular diante do espelho. Preserve exatamente a roupa e a identidade da referência. Enquadramento de corpo inteiro, ambiente clean, luz natural, aparência espontânea e realista, formato 9:16."
+},
+{
+id:4,
+title:"Pose editorial com movimento",
+cat:"Movimentos",
+type:"Fashion",
+img:"https://images.unsplash.com/photo-1529139574466-a303027c1d8b?w=700&auto=format&fit=crop",
+prompt:"Fotografia fashion editorial capturando um movimento natural da modelo, tecido e cabelo com movimento sutil, pose elegante, luz cinematográfica suave, fundo minimalista e realismo fotográfico. Preservar rosto, corpo e roupa da referência. Vertical 9:16."
+},
+{
+id:5,
+title:"Retrato com luz dourada",
+cat:"UGC",
+type:"Retrato",
+img:"https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=700&auto=format&fit=crop",
+prompt:"Retrato fotográfico natural durante o pôr do sol, luz dourada suave contornando o rosto, expressão espontânea, pele com textura real, fundo desfocado e estética de fotografia feita em smartphone premium. Preservar a pessoa da imagem original."
+},
+{
+id:6,
+title:"POV — rotina e lifestyle",
+cat:"POV",
+type:"Lifestyle",
+img:"https://images.unsplash.com/photo-1517841905240-472988babdf9?w=700&auto=format&fit=crop",
+prompt:"Imagem em primeira pessoa com estética UGC autêntica, enquadramento espontâneo, iluminação ambiente natural e detalhes realistas. Aparência de conteúdo capturado no dia a dia com smartphone, sem aspecto artificial, formato vertical 9:16."
+},
+{
+id:7,
+title:"Ensaio minimalista",
+cat:"Celular",
+type:"Feminino",
+img:"https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=700&auto=format&fit=crop",
+prompt:"Ensaio fotográfico minimalista com fundo neutro, composição limpa, pose delicada e natural, iluminação difusa, alta fidelidade de pele e cabelo. Manter as características da pessoa de referência e resultado fotográfico realista."
+},
+{
+id:8,
+title:"Passo e giro fashion",
+cat:"Movimentos",
+type:"Moda",
+img:"https://images.unsplash.com/photo-1525501484664-8e9a2a1c7e7e?w=700&auto=format&fit=crop",
+prompt:"Cena fashion com a modelo dando um passo e realizando um giro suave, movimento natural da roupa, câmera acompanhando discretamente, estética de campanha de moda, iluminação profissional e realismo cinematográfico. Vertical 9:16."
+}
+];
+
+let prompts=JSON.parse(localStorage.getItem('biaPrompts')||'null')||seed;
+let favorites=JSON.parse(localStorage.getItem('biaFavs')||'[]');
+let current='Todos';
+let editing=null;
+
+const cats=['Todos','POV','UGC','Celular','Movimentos','Feminino','Moda','Favoritos'];
+
+function persist(){
+localStorage.setItem('biaPrompts',JSON.stringify(prompts));
+localStorage.setItem('biaFavs',JSON.stringify(favorites));
+}
+
+function setFilter(c,el){
+current=c;
+document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active'));
+if(el)el.classList.add('active');
+render();
+}
+
+function filters(){
+document.getElementById('filters').innerHTML=cats.map(c=>
+`<button class="chip ${current===c?'active':''}" onclick="setFilter('${c}')">${c}</button>`
+).join('');
+}
+
+function mediaElement(p,classes=''){
+if(!p.img)return '';
+if(p.img.startsWith('data:video/')||p.img.match(/\.(mp4|webm|ogg)(\?|$)/i)){
+return `<video class="${classes}" src="${p.img}" muted loop autoplay playsinline controls></video>`;
+}
+return `<img class="${classes}" src="${p.img}" alt="${esc(p.title)}" loading="lazy">`;
+}
+
+function render(){
+filters();
+let q=document.getElementById('search').value.toLowerCase();
+
+let list=prompts.filter(p=>
+(current==='Todos'||
+(current==='Favoritos'?favorites.includes(p.id):p.cat===current||p.type===current))&&
+(`${p.title} ${p.cat} ${p.type} ${p.prompt}`.toLowerCase().includes(q))
+);
+
+document.getElementById('sectionTitle').textContent=
+current==='Todos'?'Explorar prompts':current;
+
+document.getElementById('count').textContent=`${list.length} prompts`;
+
+document.getElementById('grid').innerHTML=list.length?
+list.map((p,i)=>`
+<article class="card" style="animation-delay:${i*.04}s">
+<div class="thumb">
+${mediaElement(p)}
+<span class="tag">${esc(p.cat)}</span>
+<button class="favorite ${favorites.includes(p.id)?'on':''}" onclick="toggleFav(${p.id})">
+${favorites.includes(p.id)?'♥':'♡'}
+</button>
+</div>
+<div class="card-body">
+<div class="meta">${esc(p.type||'Criativo')}</div>
+<h4>${esc(p.title)}</h4>
+<div class="actions">
+<button class="copy" onclick="copyPrompt(${p.id})">▣ Copiar prompt</button>
+<button class="ask" onclick="details(${p.id})">✦ Ver prompt completo</button>
+</div>
+</div>
+</article>
+`).join(''):
+'<div class="empty">Nenhum prompt encontrado.</div>';
+}
+
+function esc(s=''){
+return String(s).replace(/[&<>"']/g,c=>({
+'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+}[c]));
+}
+
+function toast(msg){
+let t=document.getElementById('toast');
+t.textContent=msg;
+t.classList.add('show');
+setTimeout(()=>t.classList.remove('show'),1900);
+}
+
+async function copyPrompt(id){
+let p=prompts.find(x=>x.id===id);
+try{
+await navigator.clipboard.writeText(p.prompt);
+}catch(e){
+let a=document.createElement('textarea');
+a.value=p.prompt;
+document.body.appendChild(a);
+a.select();
+document.execCommand('copy');
+a.remove();
+}
+toast('Prompt copiado com sucesso!');
+}
+
+function toggleFav(id){
+favorites=favorites.includes(id)?
+favorites.filter(x=>x!==id):[...favorites,id];
+persist();
+render();
+}
+
+function showModal(content){
+document.getElementById('dialog').innerHTML=content;
+document.getElementById('modal').classList.add('show');
+}
+
+function closeModal(){
+document.getElementById('modal').classList.remove('show');
+}
+
+function details(id){
+let p=prompts.find(x=>x.id===id);
+showModal(`
+<div class="dialog-top">
+<h3>${esc(p.title)}</h3>
+<button class="close" onclick="closeModal()">✕</button>
+</div>
+${mediaElement(p,'detail-image')}
+<div class="detail-prompt">${esc(p.prompt)}</div>
+<button class="copy" style="width:100%" onclick="copyPrompt(${id})">▣ Copiar prompt</button>
+<div class="form-actions">
+<button class="cancel" onclick="editPrompt(${id})">Editar</button>
+<button class="cancel" onclick="closeModal()">Fechar</button>
+</div>
+`);
+}
+
+function openAdmin(){
+editing=null;
+formPrompt();
+}
+
+function editPrompt(id){
+editing=id;
+formPrompt(prompts.find(p=>p.id===id));
+}
+
+function formPrompt(p={}){
+showModal(`
+<div class="dialog-top">
+<h3>${p.id?'Editar prompt':'Adicionar novo prompt'}</h3>
+<button class="close" onclick="closeModal()">✕</button>
+</div>
+
+<div class="field">
+<label>Nome do prompt</label>
+<input id="fTitle" value="${esc(p.title||'')}" placeholder="Ex.: Ensaio fashion elegante">
+</div>
+
+<div class="field">
+<label>Categoria</label>
+<select id="fCat">
+${['POV','UGC','Celular','Movimentos','Feminino','Moda','Casa','Cenários','Kids'].map(c=>
+`<option ${p.cat===c?'selected':''}>${c}</option>`).join('')}
+</select>
+</div>
+
+<div class="field">
+<label>Tipo / etiqueta</label>
+<input id="fType" value="${esc(p.type||'Criativo')}">
+</div>
+
+<div class="field">
+<label>Adicionar foto ou vídeo</label>
+<input id="fImg" type="file" accept="image/*,video/*">
+${p.img?`
+<div style="margin-top:10px;color:#ff7783;font-size:11px">Mídia atual:</div>
+${mediaElement(p,'media-preview')}
+`:''}
+<small style="color:#9b9698">Selecione uma foto ou vídeo da galeria do seu celular.</small>
+</div>
+
+<div class="field">
+<label>Texto do prompt</label>
+<textarea id="fPrompt" placeholder="Escreva aqui o prompt completo...">${esc(p.prompt||'')}</textarea>
+</div>
+
+<div class="form-actions">
+<button class="cancel" onclick="closeModal()">Cancelar</button>
+<button class="save" onclick="savePrompt()">Salvar prompt</button>
+</div>
+
+${p.id?`<button class="cancel" style="width:100%;margin-top:9px" onclick="deletePrompt(${p.id})">Excluir prompt</button>`:''}
+`);
+}
+
+async function savePrompt(){
+let title=document.getElementById('fTitle').value.trim();
+let prompt=document.getElementById('fPrompt').value.trim();
+let file=document.getElementById('fImg').files[0];
+
+if(!title||!prompt){
+toast('Preencha o nome e o prompt.');
+return;
+}
+
+let oldPrompt=editing?prompts.find(p=>p.id===editing):null;
+let media=oldPrompt?.img||'';
+
+if(file){
+if(!file.type.startsWith('image/')&&!file.type.startsWith('video/')){
+toast('Selecione uma foto ou vídeo válido.');
+return;
+}
+
+media=await new Promise((resolve,reject)=>{
+let reader=new FileReader();
+reader.onload=()=>resolve(reader.result);
+reader.onerror=()=>reject();
+reader.readAsDataURL(file);
+}).catch(()=>{
+toast('Erro ao carregar a mídia.');
+return null;
+});
+
+if(!media)return;
+}
+
+let obj={
+id:editing||Date.now(),
+title,
+cat:document.getElementById('fCat').value,
+type:document.getElementById('fType').value.trim()||'Criativo',
+img:media,
+prompt
+};
+
+if(editing){
+prompts=prompts.map(p=>p.id===editing?obj:p);
+}else{
+prompts.unshift(obj);
+}
+
+try{
+persist();
+}catch(e){
+toast('Arquivo muito grande para armazenamento. Tente uma mídia menor.');
+return;
+}
+
+closeModal();
+render();
+toast('Prompt salvo!');
+}
+
+function deletePrompt(id){
+if(confirm('Deseja realmente excluir este prompt?')){
+prompts=prompts.filter(p=>p.id!==id);
+favorites=favorites.filter(x=>x!==id);
+persist();
+closeModal();
+render();
+toast('Prompt excluído.');
+}
+}
+
+render();
+</script>
+</body>
+</html>
